@@ -19,14 +19,15 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <chip.h>
+
 #include "main.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uavcan_stm32.hpp"
+#include "chip.h"
+#include "uavcanNode.h"
 #include "PowerModuleUavcan.h"
 /* USER CODE END Includes */
 
@@ -91,7 +92,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  PowerModuleUavcan isn;
+  isn.init();
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>nucleo_power_uavcan</name>
-	<comment></comment>
+	<comment />
 	<projects>
 	</projects>
 	<buildSpec>

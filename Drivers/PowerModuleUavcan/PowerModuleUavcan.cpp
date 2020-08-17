@@ -6,6 +6,7 @@
  */
 
 #include "PowerModuleUavcan.h"
+
 #include "main.h"
 
 PowerModuleUavcan::PowerModuleUavcan() {
@@ -17,7 +18,11 @@ PowerModuleUavcan::~PowerModuleUavcan() {
 	// TODO Auto-generated destructor stub
 }
 
-void PowerModuleUavcan::can_init () {
+void PowerModuleUavcan::init() {
+	can_init();
+}
+
+void PowerModuleUavcan::can_init() {
 	//gpiod clock is enabled before, because should not
 		GPIO_InitTypeDef CAN1_AFIO;
 		//Configure CAN1_RX_Pin
@@ -36,3 +41,5 @@ void PowerModuleUavcan::can_init () {
 		CAN1_AFIO.Alternate = GPIO_AF9_CAN1;
 		HAL_GPIO_Init(CAN1_TX_GPIO, &CAN1_AFIO);
 }
+
+
