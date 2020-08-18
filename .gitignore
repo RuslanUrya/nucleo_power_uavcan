@@ -1,7 +1,7 @@
 *~
 .mxproject
 STM32F429ZITx_FLASH.ld
-UAVCAN_NUCLEO-F429ZI Debug.cfg
+*Debug.cfg
 syscalls.c
 .settings/
 startup/

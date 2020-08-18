@@ -16,11 +16,14 @@ public:
 	virtual ~PowerModuleUavcan();
 
 	void init();
+	void start();
 
 private:
-	void can_init();
+
 
 private:
+	float voltage;
+	float current;
 	uavcanNode node;
 };
 
