@@ -21,14 +21,15 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "main.h"
-#include "usart.h"
+#include "adc.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "chip.h"
-#include "uavcanNode.h"
-#include "PowerModuleUavcan.h"
+//#include "uavcan_stm32/uavcan_stm32.hpp"
+//#include "uavcan/equipment/power/BatteryInfo.hpp"
+#include "uavcanIPS.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +49,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uavcanIPS barsuk_power;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -69,7 +70,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	HAL_ADC_Start(&hadc1);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -90,17 +91,16 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART3_UART_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-  PowerModuleUavcan isn;
-  isn.init();
+barsuk_power.init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  isn.start();
+	  barsuk_power.routine();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -151,7 +151,12 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
+	if (hadc->Instance == ADC1)
+		barsuk_power.adc_to_volt(HAL_ADC_GetValue(hadc));
+	else if (hadc->Instance == ADC2)
+		barsuk_power.adc_to_curr(HAL_ADC_GetValue(hadc));
+}
 /* USER CODE END 4 */
 
 /**

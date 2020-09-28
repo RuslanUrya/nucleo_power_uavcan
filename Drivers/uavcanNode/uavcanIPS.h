@@ -1,12 +1,12 @@
 /*
- * uavcanNode.h
+ * uavcanIPS.h
  *
  *  Created on: 17 авг. 2020 г.
  *      Author: Rus-PC
  */
 
-#ifndef UAVCANNODE_UAVCANNODE_H_
-#define UAVCANNODE_UAVCANNODE_H_
+#ifndef UAVCANNODE_UAVCANIPS_H_
+#define UAVCANNODE_UAVCANIPS_H_
 
 #include "main.h"
 #include "uavcan_stm32/uavcan_stm32.hpp"
@@ -17,27 +17,32 @@
 #define NODE_MEM_POOL_SIZE 1000
 #define NODE_ID 10
 
-class uavcanNode {
+class uavcanIPS {
 public:
-	uavcanNode(float *voltage, float *current);
-	virtual ~uavcanNode();
+	uavcanIPS();
+	virtual ~uavcanIPS();
 
 	int init();
-	int start();
+	int routine();
+	void adc_to_volt(uint32_t raw);
+	void adc_to_curr(uint32_t raw);
 
 private:
-	float *voltage_ptr;
-	float *current_ptr;
 //	uavcan_stm32::CanInitHelper<RX_QUEUE_SIZE> can;
-	uavcan::Node<NODE_MEM_POOL_SIZE> node;
+	uavcan::Node<NODE_MEM_POOL_SIZE> &node;
 	uavcan::equipment::power::BatteryInfo status_msg;
-//	uavcan::Publisher<uavcan::equipment::power::BatteryInfo>status_pub;
+	uavcan::Publisher<uavcan::equipment::power::BatteryInfo>status_pub;
+
+	const float v_coef = 0.1;
+	const float c_coef = 0.1;
 
 private:
 	uavcan::ISystemClock& getSystemClock();
 	uavcan::ICanDriver& getCanDriver();
+	uavcan::Node<NODE_MEM_POOL_SIZE>& getNode();
 	void can_init();
+
 //	uavcan::Node<NODE_MEM_POOL_SIZE>& getNode();
 };
 
-#endif /* UAVCANNODE_UAVCANNODE_H_ */
+#endif /* UAVCANNODE_UAVCANIPS_H_ */

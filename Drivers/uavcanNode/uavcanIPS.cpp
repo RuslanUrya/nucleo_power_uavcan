@@ -5,24 +5,23 @@
  *      Author: Rus-PC
  */
 
-#include "uavcanNode.h"
+#include <uavcanIPS.h>
 
-uavcanNode::uavcanNode(float *voltage, float *current) :
-voltage_ptr(voltage), current_ptr(current),
-node(getCanDriver(), getSystemClock())
-//status_pub(node)
+uavcanIPS::uavcanIPS() :
+node(getNode()),
+status_pub(node)
 {
 
 }
 
-uavcanNode::~uavcanNode() {
+uavcanIPS::~uavcanIPS() {
 	// TODO Auto-generated destructor stub
 }
 
-uavcan::ISystemClock& uavcanNode::getSystemClock() {
+uavcan::ISystemClock& uavcanIPS::getSystemClock() {
 	return uavcan_stm32::SystemClock::instance();
 }
-uavcan::ICanDriver& uavcanNode::getCanDriver(){
+uavcan::ICanDriver& uavcanIPS::getCanDriver(){
 	static uavcan_stm32::CanInitHelper<RX_QUEUE_SIZE> can;
 	static bool initialized = false;
 	if (!initialized){
@@ -35,52 +34,63 @@ uavcan::ICanDriver& uavcanNode::getCanDriver(){
 	return can.driver;
 }
 
-int uavcanNode::init() {
+uavcan::Node<NODE_MEM_POOL_SIZE>& uavcanIPS::getNode(){
+	static uavcan::Node<NODE_MEM_POOL_SIZE> node(getCanDriver(), getSystemClock());
+	return node;
+}
+
+int uavcanIPS::init() {
 	can_init();
 	int res = static_cast<int>(node.setNodeID(NODE_ID));
 	if (res == 0){
+		return res;
+	}
+
+	node.setName("Barsuk IPS");
+	node.setHealthOk();
+
+	res = node.start();
+	if (res < 0){
+		return res;
+	}
+
+	  res = status_pub.init();
+	  if(res < 0){
 		  return res;
 	  }
 
-	  node.setName("Barsuk IPS");
-	  node.setHealthOk();
-
-	  res = node.start();
-	  if (res < 0){
-		  return res;
-	  }
-
-//	  res = status_pub.init();
-//	  if(res < 0){
-//		  return res;
-//	  }
-
-//	  status_pub.setTxTimeout(uavcan::MonotonicDuration::fromMSec(500));
-//	  status_pub.setPriority(uavcan::TransferPriority::MiddleLower);
+	  status_pub.setTxTimeout(uavcan::MonotonicDuration::fromMSec(500));
+	  status_pub.setPriority(uavcan::TransferPriority::MiddleLower);
 
 	  node.setModeOperational();
+	  
+	  status_msg.battery_id = 1;
 
 	  return res;
 }
 
-int uavcanNode::start() {
+int uavcanIPS::routine() {
 	int res = node.spin(uavcan::MonotonicDuration::fromMSec(500));
 	if (res < 0) {
 		return res;
 	}
-//
-//	status_msg.battery_id = 1;
-//	status_msg.voltage = *voltage_ptr;
-//	status_msg.current = *current_ptr;
-//
-//	res = status_pub.broadcast(status_msg);
-//	if (res < 0) {
-//		return res;
-//	}
+
+	res = status_pub.broadcast(status_msg);
+	if (res < 0) {
+		return res;
+	}
 	return res;
 }
 
-void uavcanNode::can_init() {
+void uavcanIPS::adc_to_volt(uint32_t raw) {
+	status_msg.voltage = raw * v_coef;
+}
+
+void uavcanIPS::adc_to_curr(uint32_t raw) {
+	status_msg.current = raw * c_coef;
+}
+
+void uavcanIPS::can_init() {
 	//gpiod clock is enabled before, because should not
 	GPIO_InitTypeDef CAN1_AFIO;
 	//Configure CAN1_RX_Pin
@@ -99,3 +109,4 @@ void uavcanNode::can_init() {
 	CAN1_AFIO.Alternate = GPIO_AF9_CAN1;
 	HAL_GPIO_Init(CAN1_TX_GPIO, &CAN1_AFIO);
 }
+
