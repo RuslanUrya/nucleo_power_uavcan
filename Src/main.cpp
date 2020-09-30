@@ -26,10 +26,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 #include "chip.h"
+
 //#include "uavcan_stm32/uavcan_stm32.hpp"
 //#include "uavcan/equipment/power/BatteryInfo.hpp"
 #include "uavcanIPS.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

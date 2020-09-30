@@ -8,7 +8,7 @@
 #ifndef UAVCANNODE_UAVCANIPS_H_
 #define UAVCANNODE_UAVCANIPS_H_
 
-#include "main.h"
+#include "stm32f4xx_hal.h"//TODO: сделать конфиг файл с автоподключением библиотеки в зависимости от семейства
 #include "uavcan_stm32/uavcan_stm32.hpp"
 #include "uavcan/equipment/power/BatteryInfo.hpp"
 
