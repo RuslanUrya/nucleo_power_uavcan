@@ -64,6 +64,7 @@
 									<listOptionValue builtIn="false" value="../Drivers/libuavcan" />
 									<listOptionValue builtIn="false" value="../Drivers/PowerModuleUavcan" />
 									<listOptionValue builtIn="false" value="../Drivers/uavcanNode" />
+									<listOptionValue builtIn="false" value="../Drivers/Periphery" />
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.750613003" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER" />
